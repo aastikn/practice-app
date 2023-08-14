@@ -81,7 +81,7 @@ class _MyHomePageState extends State<MyHomePage> {
         // TRY THIS: Try changing the color here to a specific color (to
         // Colors.amber, perhaps?) and trigger a hot reload to see the AppBar
         // change color while the other colors stay the same.
-        backgroundColor: Theme.of(context).colorScheme.inversePrimary,
+        backgroundColor: Colors.amber,
         // Here we take the value from the MyHomePage object that was created by
         // the App.build method, and use it to set our appbar title.
         title: Text(widget.title),
@@ -93,17 +93,32 @@ class _MyHomePageState extends State<MyHomePage> {
           alignment: Alignment.center,
 
           child: Container(
-              height: 300.0,
-              width: 300.0,
-              color: Colors.blue[50],
-              child: Align(
-                alignment: Alignment.centerLeft,
-                heightFactor: 0.5,
-                widthFactor: 0.5,
-                child: FlutterLogo(
-                  size: 40,
+
+              color: Colors.red,
+              child:Container(
+                height: 300,
+                width: 300,
+                padding: EdgeInsets.all(20),
+                child:  Column(
+                  children: [
+                    Expanded(
+                      flex:1 ,
+                      child:
+                      Container(
+                        color: Colors.blue,
+                        padding: EdgeInsets.all(20),
+                        child:Align(
+                          alignment: Alignment.centerLeft,
+                          child: FlutterLogo(
+                            size: 50,
+                          ),
+                        ),
+
+                      ),
+                    ),
+                  ],
                 ),
-              ),
+              )
             ),
 
         ),
