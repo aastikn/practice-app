@@ -1,5 +1,6 @@
-
+import 'package:qr_flutter/qr_flutter.dart';
 import 'package:flutter/material.dart';
+import 'package:mobile_scanner/mobile_scanner.dart';
 
 void main() {
   runApp(const MyApp());
@@ -40,14 +41,6 @@ class MyApp extends StatelessWidget {
 class MyHomePage extends StatefulWidget {
   const MyHomePage({super.key, required this.title});
 
-  // This widget is the home page of your application. It is stateful, meaning
-  // that it has a State object (defined below) that contains fields that affect
-  // how it looks.
-
-  // This class is the configuration for the state. It holds the values (in this
-  // case the title) provided by the parent (in this case the App widget) and
-  // used by the build method of the State. Fields in a Widget subclass are
-  // always marked "final".
 
   final String title;
 
@@ -56,18 +49,8 @@ class MyHomePage extends StatefulWidget {
 }
 
 class _MyHomePageState extends State<MyHomePage> {
-  int _counter = 0;
-
-  void _incrementCounter() {
-    setState(() {
-      // This call to setState tells the Flutter framework that something has
-      // changed in this State, which causes it to rerun the build method below
-      // so that the display can reflect the updated values. If we changed
-      // _counter without calling setState(), then the build method would not be
-      // called again, and so nothing would appear to happen.
-      _counter++;
-    });
-  }
+  bool isScanCompleted = false;
+  String? code;
 
   @override
   Widget build(BuildContext context) {
@@ -78,72 +61,136 @@ class _MyHomePageState extends State<MyHomePage> {
     // fast, so that you can just rebuild anything that needs updating rather
     // than having to individually change instances of widgets.
     return Scaffold(
-      appBar: AppBar(
+        appBar: AppBar(
 
-        // TRY THIS: Try changing the color here to a specific color (to
-        // Colors.amber, perhaps?) and trigger a hot reload to see the AppBar
-        // change color while the other colors stay the same.
-        backgroundColor: Colors.amber,
-        // Here we take the value from the MyHomePage object that was created by
-        // the App.build method, and use it to set our appbar title.
-        title: Text(widget.title),
-      ),
-      body: Center(
-        child: Column(
-          children: [
-          Align(
-          alignment: Alignment.topCenter,
-          child:   ClipPath(
-            clipper: CustomShape(), // this is my own class which extendsCustomClipper
-            child: Container(
-                height: 150,
-                color: Colors.amber),
-          ),
+          // TRY THIS: Try changing the color here to a specific color (to
+          // Colors.amber, perhaps?) and trigger a hot reload to see the AppBar
+          // change color while the other colors stay the same.
+          backgroundColor: Colors.amber,
+          // Here we take the value from the MyHomePage object that was created by
+          // the App.build method, and use it to set our appbar title.
+          title: Text(widget.title),
         ),
-        SizedBox(
-          height: 100,
-        ),
-        Align(
-          alignment: Alignment.center,
-          child: Container(
-              decoration: BoxDecoration(borderRadius: BorderRadius.circular(20),color: Colors.amber,),
-
-              height: 100,
-              width: 200,
-              child: Align(
-                alignment: Alignment.center,
-                child: Text( style: TextStyle(fontStyle: FontStyle.italic,fontSize: 30.1 ),
-                    "Question 1"
-                ),
-              )
-          ),
-        ),
-        SizedBox(
-          height: 100,
-        ),
-        Container(
-            height: 100,
-            width: 300,
-            padding: EdgeInsets.all(20),
-            child: TextField(
-              decoration: InputDecoration(
-                  enabledBorder:OutlineInputBorder(
-                      borderSide:
-                      BorderSide(
-                          width: 4.0,
-                          color: Colors.amber,
-                          style: BorderStyle.solid
-                      )
-
+        body: Center(
+            child: Column(
+                children: [
+                  Align(
+                    alignment: Alignment.topCenter,
+                    child: ClipPath(
+                      clipper: CustomShape(),
+                      // this is my own class which extendsCustomClipper
+                      child: Container(
+                          height: 150,
+                          color: Colors.amber),
+                    ),
                   ),
+                  SizedBox(
+                    height: 10,
+                  ),
+                  Align(
+                    alignment: Alignment.center,
+                    child: Container(
+                        decoration: BoxDecoration(
+                          borderRadius: BorderRadius.circular(20),
+                          color: Colors.amber,),
 
-                  border: OutlineInputBorder(borderRadius:BorderRadius.circular(20),)),
-      ),
-    )
+                        height: 50,
+                        width: 200,
+                        child: Align(
+                          alignment: Alignment.center,
+                          child: Text(style: TextStyle(
+                              fontStyle: FontStyle.italic, fontSize: 30.1),
+                              "Question 1"
+                          ),
+                        )
+                    ),
+                  ),
+                  SizedBox(
+                    height: 100,
+                  ),
+                  Container(
+                    height: 100,
+                    width: 300,
+                    padding: EdgeInsets.all(20),
+                    child: TextField(
+                      decoration: InputDecoration(
+                          focusedBorder: OutlineInputBorder(
+                              borderSide:
+                              BorderSide(
+                                  width: 4.0,
+                                  color: Colors.amber,
+                                  style: BorderStyle.solid
+                              )
 
-    ],
-    ),
-    ),
+                          ),
+
+                          enabledBorder: OutlineInputBorder(
+                              borderSide:
+                              BorderSide(
+                                  width: 4.0,
+                                  color: Colors.amber,
+                                  style: BorderStyle.solid
+                              )
+
+                          ),
+
+                          border: OutlineInputBorder(
+                            borderRadius: BorderRadius.circular(20),)),
+                    ),
+                  ),
+                  SizedBox(height: 10),
+                  Container(
+                    height :100,
+                    width : 100,
+                    child: MobileScanner(
+                        allowDuplicates: true,
+                        onDetect: (barcode, args) {
+                          if (!isScanCompleted) {
+                            code = barcode.rawValue ?? '---';
+                            isScanCompleted = true;
+                            showDialog(context: context, builder: (BuildContext context1) {
+                              return Scaffold(
+                                body: Center(
+                                  child:Column(
+                                    children: [
+                                      Text(
+                                        "$code",
+                                        style: TextStyle(
+                                          color: Colors.black87,
+                                          fontSize: 16,
+                                          letterSpacing: 1,
+                                        ),
+                                      ),
+                                      SizedBox(height: 10,),
+                                      SizedBox(
+                                        width: MediaQuery.of(context).size.width-100,
+                                        height: 48,
+                                        child: ElevatedButton(onPressed: (){},
+                                          style: ElevatedButton.styleFrom(
+                                            backgroundColor: Colors.blue,
+                                          ),
+                                          child:  Text(
+                                            "Copy",
+                                            style: TextStyle(
+                                              color: Colors.black87,
+                                              fontSize: 16,
+                                              letterSpacing: 1,
+                                            ),
+                                          ),
+                                        ),
+                                      )
+                                    ],
+                                  ),
+                                ),
+                              );
+                            });
+                          }
+                        }
+                    ),
+                  )
+                ]
+            )
+        )
     );
   }
 }
